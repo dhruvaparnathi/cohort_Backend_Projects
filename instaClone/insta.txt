@@ -1,0 +1,15 @@
+==> Authentication
+    => register (1.save data 2.give token)
+    => login
+    => logout (blacklisting)
+    => [OTP verification]
+
+==> Posts
+    => create
+    => show in feed
+    => like post
+    => save post
+
+==> Users
+    => followers
+    => followings 
