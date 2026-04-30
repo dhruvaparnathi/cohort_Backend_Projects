@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-    usernname:{
+    username:{
         type: String,
         unique: [true, "Username already Exists"],
         required: [true, "username is required"]
@@ -15,7 +15,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "password is required"]
     },
-    bio: String,
+    bio: {
+        type: String
+    },
     profileImage: {
         type: String,
         default: "https://ik.imagekit.io/dhruv2006/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.webp"
