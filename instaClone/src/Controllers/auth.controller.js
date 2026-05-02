@@ -61,7 +61,6 @@ async function loginController(req,res){
         res.status(404).json({message:"User not Found!"});
     }
 
-    const hash = crypto.createHash('md5').update(password).digest('hex');
     const isPasswordValid = await bcrypt.compare(password,user.password);
 
     if(!isPasswordValid){

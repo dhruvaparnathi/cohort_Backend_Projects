@@ -6,4 +6,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 postRoutes.post('/',upload.single('postImage'), postController.createPostController);
 
+postRoutes.get('/', postController.getAllPostsController);
+
+postRoutes.get('/details/:postId', postController.getPostDetailsController);
+
 module.exports = postRoutes;
