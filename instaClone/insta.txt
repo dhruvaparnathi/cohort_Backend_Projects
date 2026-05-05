@@ -7,9 +7,9 @@
 ==> Posts
     => create
     => show in feed
-    => like post
+    => like post [Edge Collection]
     => save post
 
 ==> Users
-    => followers
+    => followers  [Edge Collection]
     => followings 
