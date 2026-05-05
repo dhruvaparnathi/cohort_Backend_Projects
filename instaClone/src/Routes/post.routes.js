@@ -11,4 +11,8 @@ postRoutes.get('/', identifyUser, postController.getAllPostsController);
 
 postRoutes.get('/details/:postId', identifyUser, postController.getPostDetailsController);
 
+postRoutes.post('/like/:postId', identifyUser, postController.likePost);
+
+postRoutes.post('/unlike/:postId', identifyUser, postController.unlikePost);
+
 module.exports = postRoutes;
