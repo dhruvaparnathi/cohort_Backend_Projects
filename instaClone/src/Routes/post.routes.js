@@ -3,7 +3,7 @@ const postRoutes = express.Router();
 const postController = require('../Controllers/post.controller');
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
-const identifyUser = require('../middlewares/auth.middleware');
+const identifyUser = require('../Middlewares/auth.middleware');
 
 postRoutes.post('/',upload.single('postImage'), identifyUser, postController.createPostController);
 
