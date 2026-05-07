@@ -106,13 +106,11 @@ button {
 }
 
 .auth-right {
-  background: linear-gradient(
-      rgba(169, 164, 252, 0.8),
-      rgba(96, 11, 244, 0.8)
-    ),
-    url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200&auto=format&fit=crop")
+  background: 
+    url("https://plus.unsplash.com/premium_photo-1776182821245-0c532b88e373?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
       center/cover;
 
+  margin-left: 6rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -122,11 +120,12 @@ button {
 
   h2 {
     font-size: 2.5rem;
-    margin-bottom: 1rem;
+    margin-top: 16rem;
   }
 
   p {
     line-height: 1.8;
+    margin-top: 1rem;
     font-size: 1.05rem;
   }
 }
