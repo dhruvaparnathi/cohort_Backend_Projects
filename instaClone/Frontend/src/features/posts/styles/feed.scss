@@ -1,0 +1,11 @@
+.feed {
+  min-height: 100vh;
+  background-color: #000;
+  padding: 2rem 1rem;
+
+  .feed-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0rem;
+  }
+}
