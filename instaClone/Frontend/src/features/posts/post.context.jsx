@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { getFeed } from "./services/feed.api";
+import { getFeed } from "./services/post.api";
 
 export const PostContext = createContext();
 

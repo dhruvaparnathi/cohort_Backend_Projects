@@ -10,6 +10,10 @@ const imagekit = new ImageKit({
 
 async function createPostController(req, res) {
 
+    if(req.file.buffer==undefined || req.body.caption==undefined){
+        return res.status(400).json({ message: "No file or Caption to Post." });
+    }
+
     const file = await imagekit.files.upload({
         file: await toFile(Buffer.from(req.file.buffer), 'file'),
         fileName: 'Test',
@@ -127,7 +131,7 @@ async function feedController(req,res){
 
     const userId = req.user.id;
 
-    const posts = await Promise.all(( await postModel.find().populate('user').lean())
+    const posts = await Promise.all(( await postModel.find().sort({ _id: -1 }).populate('user').lean())
     .map(async (post) => {
 
         const isLiked = await postLikeModel.findOne({
