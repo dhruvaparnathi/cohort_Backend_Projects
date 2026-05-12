@@ -1,29 +1,43 @@
 import { Link } from "react-router";
 import "../styles/nav.scss";
 import CreatePost from "../../posts/pages/CreatePost";
+import { getMe } from "../../auth/services/auth.api";
+import { useAuth } from "../../auth/hooks/useAuth";
+import { useEffect } from "react";
 
 const Nav = () => {
+  const { user, handleGetMe, loading } = useAuth();
 
-  const user = {
-    username: "test",
-    profileImage:
-      "https://ik.imagekit.io/dhruv2006/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.webp",
-  };
+  useEffect(() => {
+    handleGetMe().then((res) => {
+      console.log(res);
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <main>
+        <h1>Fetching User</h1>
+      </main>
+    );
+  }
 
   return (
     <nav className="nav">
       <div className="nav-left">
-        <img
-          src={user.profileImage}
-          alt="profile"
-        />
-
-        <h3>{user.username}</h3>
+        {user ? (
+          <>
+            <img src={user.profileImage} alt="profile" />
+            <h3>{user.username}</h3>
+          </>
+        ) : (
+          <h3>Loading...</h3>
+        )}
       </div>
 
       <div className="nav-right">
         <Link to="/create-post">
-            <button>+ New Post</button>
+          <button>+ New Post</button>
         </Link>
       </div>
     </nav>

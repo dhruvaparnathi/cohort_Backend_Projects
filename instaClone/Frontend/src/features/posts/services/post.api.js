@@ -16,6 +16,24 @@ export async function getFeed(){
 
 }
 
+export async function likePost(postId) {
+    try{
+        const response = await api.post(`/like/${postId}`);
+        return response.data;
+    }catch(err){
+        throw err;
+    }
+}
+
+export async function unlikePost(postId){
+    try{
+        const response = await api.post(`/unlike/${postId}`);
+        return response.data; 
+    }catch(err){
+        throw err;
+    }
+}
+
 export async function createPost(imageFile, caption){
 
     const formData = new FormData();

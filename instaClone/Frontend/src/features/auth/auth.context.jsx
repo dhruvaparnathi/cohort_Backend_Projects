@@ -36,8 +36,21 @@ export function AuthProvider({ children }){
         }
     }
 
+    const handleGetMe = async () => {
+
+        setLoading(true);
+        try{
+            const response = await getMe();
+            setUser(response.user);
+        }catch(err){
+            console.log(err);
+        }finally{
+            setLoading(false);
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{user, loading, handleLogin, handleRegister}}>
+        <AuthContext.Provider value={{user, loading, handleLogin, handleRegister, handleGetMe}}>
             {children}
         </AuthContext.Provider>
     )

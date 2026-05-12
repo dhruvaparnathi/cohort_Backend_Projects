@@ -15,7 +15,7 @@ const Feed = () => {
     if(loading || !feed){
         return (
             <main><h1>Feed is Loading...</h1>
-            <h1>If you are not Login.</h1>
+            <h1>If you are not Login, please Login!</h1>
             <h2><a href="/login">Login Page</a></h2>
           </main>
         )

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/post.scss";
 
 import {
@@ -8,19 +8,19 @@ import {
   Bookmark,
   MoreHorizontal,
 } from "lucide-react";
+import { usePost } from "../hooks/usePost";
 
 const Post = ({ post }) => {
 
-  const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(99);
+  const { loading, handleGetFeed, handleLikePost, handleUnLikePost } = usePost();
 
   const handleLike = () => {
-    setLiked(!liked);
-
-    if (!liked) {
-      setLikes(likes + 1);
-    } else {
-      setLikes(likes - 1);
+    if(!post.isLiked){
+      handleLikePost(post._id)
+      .then((res)=>console.log(res))
+    }else{
+      handleUnLikePost(post._id)
+      .then((res)=>console.log(res))
     }
   };
 
@@ -55,8 +55,8 @@ const Post = ({ post }) => {
             <button onClick={handleLike}>
               <Heart
                 size={26}
-                fill={liked ? "red" : "transparent"}
-                color={liked ? "red" : "white"}
+                fill={post.isLiked ? "red" : "transparent"}
+                color={post.isLiked ? "red" : "white"}
               />
             </button>
 
@@ -73,9 +73,6 @@ const Post = ({ post }) => {
             <Bookmark size={24} />
           </button>
         </div>
-
-        {/* Likes */}
-        <h4 className="likes">{likes} likes</h4>
 
         {/* Caption */}
         <p className="caption">

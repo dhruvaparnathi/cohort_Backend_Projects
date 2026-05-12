@@ -120,7 +120,10 @@ async function unlikePost(req,res){
         return res.status(200).json({ message: "Post already disliked" });
     }
 
-    await postLikeModel.findByIdAndDelete(postId);
+    await postLikeModel.findOneAndDelete({
+        post: postId,
+        user: userId
+    });
 
     res.status(200).json({
         message: "Post Disliked Successfully"
