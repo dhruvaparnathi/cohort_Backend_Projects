@@ -27,20 +27,22 @@ export const usePost = ()=>{
 
     const handleLikePost = async(postId) => {
 
-        setLoading(true);
         await likePost(postId);
-        const data = await getFeed();
-        setFeed(data.posts);
-        setLoading(false);
+        setFeed((prevFeed) =>
+          prevFeed.map((p) =>
+            p._id === postId ? { ...p, isLiked: true } : p
+          )
+        );
     }
 
     const handleUnLikePost = async(postId) => {
 
-        setLoading(true);
         await unlikePost(postId);
-        const data = await getFeed();
-        setFeed(data.posts);
-        setLoading(false);
+        setFeed((prevFeed) =>
+          prevFeed.map((p) =>
+            p._id === postId ? { ...p, isLiked: false } : p
+          )
+        );
     }
 
     return { loading, feed, post, handleGetFeed, handleCreatePost, handleLikePost, handleUnLikePost }
