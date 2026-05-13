@@ -28,7 +28,7 @@ const Nav = () => {
         {user ? (
           <>
             <img src={user.profileImage} alt="profile" />
-            <h3>{user.username}</h3>
+            <a href="/profile"><h3>{user.username}</h3></a>
           </>
         ) : (
           <h3>Loading...</h3>

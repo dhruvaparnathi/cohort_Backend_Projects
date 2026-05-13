@@ -56,16 +56,16 @@ async function loginController(req,res){
             { username: username},
             { email: email }
         ]
-    });
+    }).select('+password +bio');
 
     if(!user){
-        res.status(404).json({message:"User not Found!"});
+        return res.status(404).json({message:"User not Found!"});
     }
 
     const isPasswordValid = await bcrypt.compare(password,user.password);
 
     if(!isPasswordValid){
-        res.status(401).json({message:"Password is invalid"});
+        return res.status(401).json({message:"Password is invalid"});
     }
 
     const token = jwt.sign(
@@ -96,7 +96,8 @@ async function getMeController(req,res) {
 
     const userId = req.user.id;
 
-    const user = await userModel.findById(userId);
+    const user = await userModel.findById(userId).select('+bio');
+
 
     res.status(200).json({
         user:{

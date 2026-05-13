@@ -4,23 +4,27 @@ const userModel = require('../models/user.model');
 async function followUserController(req, res) {
 
     const followeeUsername = req.params.username;
-    const followerUsername = req.user.username;
+    const followerId = req.user.id;
 
-    if (followerUsername === followeeUsername) {
-        return res.status(400).json({ message: "You Can't follow yourself." });
-    }
-
-    const followeeExists = await userModel.findOne({
+    const followee = await userModel.findOne({
         username: followeeUsername
     });
 
-    if (!followeeExists) {
-        return res.status(404).json({ message: `user ${followeeUsername} you trying to follow, does not exist.` });
+    if (!followee) {
+        return res.status(404).json({
+            message: `user ${followeeUsername} you trying to follow, does not exist.`
+        });
+    }
+
+    if (followerId === followee._id.toString()) {
+        return res.status(400).json({
+            message: "You can't follow yourself."
+        });
     }
 
     const alreadyFollow = await followModel.findOne({
-        follower: followerUsername,
-        followee: followeeUsername
+        follower: followerId,
+        followee: followee._id
     });
 
     if (alreadyFollow) {
@@ -30,40 +34,46 @@ async function followUserController(req, res) {
     }
 
     const followRecord = await followModel.create({
-        follower: followerUsername,
-        followee: followeeUsername
+        follower: followerId,
+        followee: followee._id
     });
 
     res.status(201).json({
-        message: "follow request sent successfully.",
+        message: "Follow request sent successfully.",
         follow: followRecord
-    })
+    });
 }
 
 async function unfollowUserController(req, res) {
 
     const followeeUsername = req.params.username;
-    const followerUsername = req.user.username;
+    const followerId = req.user.id;
 
-    if (followeeUsername === followerUsername) {
-        return res.status(400).json({ message: "You Can't unfollow yourself." });
-    }
-
-    const followeeExists = await userModel.findOne({
+    const followee = await userModel.findOne({
         username: followeeUsername
     });
 
-    if (!followeeExists) {
-        return res.status(404).json({ message: `user ${followeeUsername} you trying to unfollow, does not exist.` });
+    if (!followee) {
+        return res.status(404).json({
+            message: `user ${followeeUsername} you trying to unfollow, does not exist.`
+        });
+    }
+
+    if (followerId === followee._id.toString()) {
+        return res.status(400).json({
+            message: "You can't unfollow yourself."
+        });
     }
 
     const isUserFollowing = await followModel.findOne({
-        followee: followeeUsername,
-        follower: followerUsername
+        follower: followerId,
+        followee: followee._id
     });
 
     if (!isUserFollowing) {
-        return res.status(400).json({ message: `You are not following ${followeeUsername}` });
+        return res.status(400).json({
+            message: `You are not following ${followeeUsername}`
+        });
     }
 
     await followModel.findByIdAndDelete(isUserFollowing._id);
@@ -71,86 +81,116 @@ async function unfollowUserController(req, res) {
     res.status(200).json({
         message: `Now you unfollowed ${followeeUsername}`
     });
-
 }
 
 async function getAllFollowRequestsController(req, res) {
 
-    const username = req.user.username;
+    const userId = req.user.id;
 
-    const followRequests = await followModel.find({
-        followee: username
-    });
+    const followRequests = await followModel
+        .find({
+            followee: userId,
+            status: "pending"
+        })
+        .populate('follower', 'username profileImage');
 
-    if (!followRequests) {
-        return res.status(200).json({ message: "No Follow Requests Found" });
+    if (followRequests.length === 0) {
+        return res.status(200).json({
+            message: "No Follow Requests Found",
+            followRequests: []
+        });
     }
 
     res.status(200).json({
-        message: "Follow Request Fetched successfully.",
+        message: "Follow Requests fetched successfully.",
         followRequests
     });
 }
 
 async function getAllFollowingsController(req, res) {
 
-    const username = req.user.username;
+    const userId = req.user.id;
 
-    const followings = await followModel.find({
-        follower: username,
-        status: "accepted"
-    });
+    const followings = await followModel
+        .find({
+            follower: userId,
+            status: "accepted"
+        })
+        .populate('followee', 'username profileImage');
 
-    if (followings.length===0) {
-        return res.status(200).json({ message: "You don't follow anyone." });
+    if (followings.length === 0) {
+        return res.status(200).json({
+            message: "You don't follow anyone.",
+            followings: []
+        });
     }
 
     res.status(200).json({
-        message: "Followings Fetched successfully.",
+        message: "Followings fetched successfully.",
         followings
     });
 }
 
 async function getAllFollowersController(req, res) {
 
-    const username = req.user.username;
+    const userId = req.user.id;
 
-    const followers = await followModel.find({
-        followee: username,
-        status: "accepted"
-    });
+    const followers = await followModel
+        .find({
+            followee: userId,
+            status: "accepted"
+        })
+        .populate('follower', 'username profileImage');
 
-    if (followers.length===0) {
-        return res.status(200).json({ message: "You don't have followers." });
+    if (followers.length === 0) {
+        return res.status(200).json({
+            message: "You don't have followers.",
+            followers: []
+        });
     }
 
     res.status(200).json({
-        message: "Followers Fetched successfully.",
+        message: "Followers fetched successfully.",
         followers
     });
 }
 
 async function acceptFollowRequestController(req, res) {
 
-    const follower = req.params.username;
-    const followee = req.user.username;
+    const followerUsername = req.params.username;
+    const followeeId = req.user.id;
 
-    const followerExists = await userModel.findOne({
-        username: follower
+    const follower = await userModel.findOne({
+        username: followerUsername
     });
 
-    if (!followerExists) {
-        return res.status(404).json({ message: `username ${follower} does not exists.` });
+    if (!follower) {
+        return res.status(404).json({
+            message: `username ${followerUsername} does not exist.`
+        });
     }
 
     const updated = await followModel.findOneAndUpdate(
-        { follower, followee, status: "pending" },
-        { $set: { status: "accepted" } },
-        { returnDocument: 'after', runValidators: true }   
-    );
+        {
+            follower: follower._id,
+            followee: followeeId,
+            status: "pending"
+        },
+        {
+            $set: { status: "accepted" }
+        },
+        {
+            returnDocument: 'after',
+            runValidators: true
+        }
+    )
+    .populate('follower', 'username profileImage')
+    .populate('followee', 'username profileImage');
 
     if (!updated) {
-        return res.status(404).json({ message: "No pending follow request found." });
+        return res.status(404).json({
+            message: "No pending follow request found."
+        });
     }
 
     return res.status(200).json({
@@ -161,25 +201,40 @@ async function acceptFollowRequestController(req, res) {
 
 async function rejectFollowRequestController(req, res) {
 
-    const follower = req.params.username;
-    const followee = req.user.username;
+    const followerUsername = req.params.username;
+    const followeeId = req.user.id;
 
-    const followerExists = await userModel.findOne({
-        username: follower
+    const follower = await userModel.findOne({
+        username: followerUsername
     });
 
-    if (!followerExists) {
-        return res.status(404).json({ message: `username ${follower} does not exists.` });
+    if (!follower) {
+        return res.status(404).json({
+            message: `username ${followerUsername} does not exist.`
+        });
     }
 
     const updated = await followModel.findOneAndUpdate(
-        { follower, followee, status: "pending" },
-        { $set: { status: "rejected" } },
-        { returnDocument: 'after', runValidators: true }
-    );
+        {
+            follower: follower._id,
+            followee: followeeId,
+            status: "pending"
+        },
+        {
+            $set: { status: "rejected" }
+        },
+        {
+            returnDocument: 'after',
+            runValidators: true
+        }
+    )
+    .populate('follower', 'username profileImage')
+    .populate('followee', 'username profileImage');
 
     if (!updated) {
-        return res.status(404).json({ message: "No pending follow request found." });
+        return res.status(404).json({
+            message: "No pending follow request found."
+        });
     }
 
     return res.status(200).json({
@@ -196,4 +251,4 @@ module.exports = {
     getAllFollowersController,
     acceptFollowRequestController,
     rejectFollowRequestController
-}
+};

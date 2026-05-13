@@ -7,6 +7,8 @@ export function AuthProvider({ children }){
 
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [followingsData, setFollowingsData] = useState(null);
+    const [followersData, setFollowersData] = useState(null);
 
     const handleRegister = async (username, email, password) => {
 
@@ -49,8 +51,34 @@ export function AuthProvider({ children }){
         }
     }
 
+    const handleGetFollowings = async () => {
+
+        setLoading(true);
+        try{
+            const response = await handleGetFollowings();
+            setFollowingsData(response.data);
+        }catch(err){
+            console.log(err);
+        }finally{
+            setLoading(false);
+        }
+    }
+
+    const handleGetFollowers = async () => {
+
+        setLoading(true);
+        try{
+            const response = await handleGetFollowers();
+            setFollowersData(response.data);
+        }catch(err){
+            console.log(err);
+        }finally{
+            setLoading(false);
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{user, loading, handleLogin, handleRegister, handleGetMe}}>
+        <AuthContext.Provider value={{user, followingsData, followersData, loading, handleLogin, handleRegister, handleGetMe, handleGetFollowings, handleGetFollowers}}>
             {children}
         </AuthContext.Provider>
     )

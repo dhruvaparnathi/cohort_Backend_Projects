@@ -42,3 +42,22 @@ export async function getMe(){
     }
 }
 
+export async function getFollowings(){
+
+    try{
+        const response = await api.get('/followings');
+        return response.data;
+    }catch(err){
+        throw err;
+    }
+}
+
+export async function getFollowers(){
+
+    try{
+        const response = await api.get('/followers');
+        return response.data;
+    }catch(err){
+        throw err;
+    }
+}
