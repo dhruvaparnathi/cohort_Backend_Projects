@@ -7,11 +7,12 @@ export function PostProvider({ children }){
 
     const [post, setPost] = useState(null);
     const [feed, setFeed] = useState(null);
+    const [userPosts, setUserPosts] = useState(null);
     const [loading, setLoading] = useState(false);
 
 
     return (
-        <PostContext.Provider value={{ post, setPost, feed, setFeed, loading, setLoading }}>
+        <PostContext.Provider value={{ post, setPost, feed, setFeed, userPosts, setUserPosts, loading, setLoading }}>
             {children}
         </PostContext.Provider>
     )

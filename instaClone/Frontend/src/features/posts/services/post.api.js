@@ -47,3 +47,13 @@ export async function createPost(imageFile, caption){
         throw err;
     }
 }
+
+export async function getAllPosts(){
+
+    try{
+        const response = await api.get('/');
+        return response.data;
+    }catch(err){
+        throw err;
+    }
+}

@@ -1,145 +1,207 @@
-import { useContext } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/profile.scss";
-import { AuthContext } from "../auth.context";
+
+import Nav from "../../shared/components/Nav";
+
+import {
+  Grid3X3,
+  Users,
+  UserPlus,
+  Settings,
+  Heart,
+} from "lucide-react";
+
+import { useAuth } from "../hooks/useAuth";
+import { getFollowers, getFollowings } from "../services/auth.api";
+import { getAllPosts, getFeed } from "../../posts/services/post.api";
+import { usePost } from "../../posts/hooks/usePost";
 
 const Profile = () => {
-    const context = useContext(AuthContext);
-    const { loading, user, followingsData, followersData, handleGetFollowings, handleGetFollowers } = context;
-  const user = {
-    username: "test_user",
-    bio: "Full Stack Developer 🚀 | React & Node.js",
+  const { user, handleGetMe } = useAuth();
+  const { userPosts, handleGetAllPosts } = usePost();
 
-    profileImage:
-      "https://ik.imagekit.io/dhruv2006/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.webp",
+  const [posts, setPosts] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const [followings, setFollowings] = useState([]);
 
-    followings: [
-      {
-        username: "alex",
-        profileImage:
-          "https://i.pravatar.cc/150?img=11",
-      },
+  useEffect(() => {
+    if (!user) {
+      handleGetMe();
+      return;
+    }
 
-      {
-        username: "emma",
-        profileImage:
-          "https://i.pravatar.cc/150?img=12",
-      },
+    fetchProfile();
+  }, [user]);
 
-      {
-        username: "john",
-        profileImage:
-          "https://i.pravatar.cc/150?img=13",
-      },
-    ],
+  useEffect(() => {
+    if (userPosts) setPosts(userPosts);
+  }, [userPosts]);
 
-    followers: [
-      {
-        username: "dhruv",
-        profileImage:
-          "https://i.pravatar.cc/150?img=14",
-      },
+  async function fetchProfile() {
+    try {
+      const posts = await getAllPosts();
+      const followersRes = await getFollowers();
+      const followingsRes = await getFollowings();
+      setPosts(posts.posts);
+      setFollowers(followersRes.followers || []);
+      setFollowings(followingsRes.followings || []);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
-      {
-        username: "rohit",
-        profileImage:
-          "https://i.pravatar.cc/150?img=15",
-      },
-
-      {
-        username: "virat",
-        profileImage:
-          "https://i.pravatar.cc/150?img=16",
-      },
-    ],
-  };
+  if (!user) {
+    return (
+      <div className="profile-loading">
+        <h1>Loading Profile...</h1>
+      </div>
+    );
+  }
 
   return (
-    <div className="profile-page">
-      <div className="profile-card">
+    <>
+      <Nav />
 
-        {/* Top */}
-        <div className="profile-top">
+      <main className="modern-profile">
 
-          <div className="profile-image">
-            <img
-              src={user.profileImage}
-              alt="profile"
-            />
-          </div>
+        {/* HERO SECTION */}
 
-          <div className="profile-info">
-            <h1>{user.username}</h1>
+        <section className="profile-hero">
 
-            <p>{user.bio}</p>
+          <div className="hero-overlay"></div>
 
-            <div className="profile-stats">
-              <div>
-                <h3>{user.followers.length}</h3>
-                <span>Followers</span>
+          <div className="profile-card">
+
+            <div className="profile-left">
+
+              <div className="profile-image-wrapper">
+                <img src={user.profileImage} alt="profile" />
               </div>
 
-              <div>
-                <h3>{user.followings.length}</h3>
-                <span>Following</span>
-              </div>
-
-              <div>
-                <h3>12</h3>
-                <span>Posts</span>
-              </div>
             </div>
-          </div>
 
-        </div>
+            <div className="profile-right">
 
-        {/* Bottom */}
-        <div className="profile-bottom">
+              <div className="profile-top-row">
 
-          {/* Following */}
-          <div className="follow-section">
-            <h2>Following</h2>
-
-            <div className="follow-list">
-              {user.followings.map((following, index) => (
-                <div
-                  className="follow-user"
-                  key={index}
-                >
-                  <img
-                    src={following.profileImage}
-                    alt="following"
-                  />
-
-                  <p>{following.username}</p>
+                <div>
+                  <h1>{user.username}</h1>
+                  <p>@{user.username}</p>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Followers */}
-          <div className="follow-section">
-            <h2>Followers</h2>
+                <button className="edit-btn">
+                  <Settings size={18} />
+                  Edit Profile
+                </button>
 
-            <div className="follow-list">
-              {user.followers.map((follower, index) => (
-                <div
-                  className="follow-user"
-                  key={index}
-                >
-                  <img
-                    src={follower.profileImage}
-                    alt="follower"
-                  />
+              </div>
 
-                  <p>{follower.username}</p>
+              <p className="bio">
+                {user.bio || "No bio added yet."}
+              </p>
+
+              {/* STATS */}
+
+              <div className="stats-grid">
+
+                <div className="stat-card">
+                  <Grid3X3 size={22} />
+                  <h2>{posts.length}</h2>
+                  <p>Posts</p>
                 </div>
-              ))}
+
+                <div className="stat-card">
+                  <Users size={22} />
+                  <h2>{followers.length}</h2>
+                  <p>Followers</p>
+                </div>
+
+                <div className="stat-card">
+                  <UserPlus size={22} />
+                  <h2>{followings.length}</h2>
+                  <p>Following</p>
+                </div>
+
+              </div>
+
+              {/* FOLLOWERS PREVIEW */}
+
+              <div className="followers-preview">
+
+                <div className="preview-images">
+
+                  {followers.slice(0, 6).map((follower, index) => (
+                    <img
+                      key={index}
+                      src={follower?.follower?.profileImage}
+                      alt=""
+                    />
+                  ))}
+
+                </div>
+
+                <span>
+                  Connected with {followers.length} amazing people
+                </span>
+
+              </div>
+
             </div>
+
           </div>
 
-        </div>
-      </div>
-    </div>
+        </section>
+
+        {/* POSTS */}
+
+        <section className="posts-section">
+
+          <div className="section-title">
+            <Heart size={20} />
+            <h2>Your Posts</h2>
+          </div>
+
+          <div className="posts-grid">
+
+            {posts.length === 0 ? (
+              <div className="empty-posts">
+                <h2>No Posts Yet</h2>
+                <p>Share your first memory 🚀</p>
+              </div>
+            ) : (
+              posts.map((post) => (
+                <div className="modern-post-card" key={post._id}>
+
+                  <img src={post.imgUrl} alt="post" />
+
+                  <div className="post-content">
+
+                    <div className="post-user-info">
+                      <img
+                        src={user.profileImage}
+                        alt=""
+                      />
+
+                      <div>
+                        <h4>{user.username}</h4>
+                        <p>{post.likesCount || 0} likes</p>
+                      </div>
+                    </div>
+
+                    <p>{post.caption}</p>
+
+                  </div>
+
+                </div>
+              ))
+            )}
+
+          </div>
+
+        </section>
+
+      </main>
+    </>
   );
 };
 

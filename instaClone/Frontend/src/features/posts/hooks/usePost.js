@@ -1,4 +1,4 @@
-import { getFeed, createPost, likePost, unlikePost } from "../services/post.api";
+import { getFeed, createPost, likePost, unlikePost, getAllPosts } from "../services/post.api";
 import { useContext } from "react";
 import { PostContext } from "../Post.context";
 
@@ -6,7 +6,7 @@ export const usePost = ()=>{
 
     const context = useContext(PostContext);
 
-    const { post, setPost, feed, setFeed, loading, setLoading } = context
+    const { post, setPost, feed, setFeed, userPosts, setUserPosts, loading, setLoading } = context
 
     const handleGetFeed = async () => {
 
@@ -45,5 +45,14 @@ export const usePost = ()=>{
         );
     }
 
-    return { loading, feed, post, handleGetFeed, handleCreatePost, handleLikePost, handleUnLikePost }
+    // Despite the name, this should fetch global posts (feed)
+    const handleGetAllPosts = async () => {
+        setLoading(true);
+        const data = await getFeed();
+        setUserPosts(data);
+        setLoading(false);
+    }
+
+
+    return { loading, feed, post, handleGetFeed, handleCreatePost, handleLikePost, handleUnLikePost, handleGetAllPosts }
 }

@@ -74,6 +74,8 @@ const Post = ({ post }) => {
             <Bookmark size={24} />
           </button>
         </div>
+        
+        <p><span>{post.coun}</span></p>
 
         {/* Caption */}
         <p className="caption">
