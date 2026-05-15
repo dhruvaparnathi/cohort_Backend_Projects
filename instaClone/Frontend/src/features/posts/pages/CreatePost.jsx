@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import "../styles/createPost.scss";
 import { usePost } from "../hooks/usePost";
 import { useNavigate } from "react-router";
+import Loader from "../../shared/components/Loader";
 
 const CreatePost = () => {
   const [caption, setCaption] = useState("");
@@ -10,12 +11,10 @@ const CreatePost = () => {
 
   const navigate = useNavigate();
 
-  const { loading, handleCreatePost } = usePost();
+  const { loading, handleCreatePost, handleGetFeed } = usePost();
 
   if(loading){
-    return (
-      <main><h1>Creating your Post...</h1></main>
-    )
+    return <Loader message="Creating your post..." />
   }
 
   const handleImageChange = (e) => {
@@ -34,7 +33,8 @@ const CreatePost = () => {
 
     setCaption("");
     setImage(null);
-
+    
+    await handleGetFeed();
     navigate('/');
   };
 

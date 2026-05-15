@@ -21,7 +21,7 @@ export const usePost = ()=>{
         setLoading(true);
         const data = await createPost(imageFile, caption);
         setPost(data.post);
-        setFeed([data.post, ...feed]);
+        setFeed([data.post, ...(feed || [])]);
         setLoading(false);
     }
 

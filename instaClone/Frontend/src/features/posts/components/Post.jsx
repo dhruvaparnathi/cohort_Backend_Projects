@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../styles/post.scss";
 
 
@@ -10,10 +10,40 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { usePost } from "../hooks/usePost";
+import { useAuth } from "../../auth/hooks/useAuth";
 
 const Post = ({ post }) => {
 
-  const { loading, handleGetFeed, handleLikePost, handleUnLikePost } = usePost();
+  const { loading, handleLikePost, handleUnLikePost } = usePost();
+  const { user, followingsData, pendingRequestsData, handleFollowUser, handleUnfollowUser } = useAuth();
+
+  useEffect(() => {
+    console.log('pendingRequestsData:', pendingRequestsData);
+    console.log('followingsData:', followingsData);
+  }, [pendingRequestsData, followingsData]);
+
+  const isOwnPost = user?.username === post.user.username;
+  const isFollowing = followingsData?.followings?.some(
+    (item) => item.followee?.username === post.user.username
+  );
+  const hasPendingRequest = pendingRequestsData?.pendingRequests?.some(
+    (item) => item.followee?.username === post.user.username
+  );
+
+  const getFollowButtonText = () => {
+    if (isFollowing) return 'Following';
+    if (hasPendingRequest) return 'Pending';
+    return 'Follow';
+  };
+
+  const handleFollowAction = async () => {
+    if (isFollowing) {
+      await handleUnfollowUser(post.user.username);
+    } else if (!hasPendingRequest) {
+      await handleFollowUser(post.user.username);
+    }
+    // If pending, do nothing (maybe show a message or allow cancel)
+  };
 
   const handleLike = () => {
     if(!post.isLiked){
@@ -38,9 +68,21 @@ const Post = ({ post }) => {
           </div>
         </div>
 
-        <button className="more-btn">
-          <MoreHorizontal size={22} />
-        </button>
+        <div className="post-top-actions">
+          {!isOwnPost && (
+            <button 
+              className={`follow-btn ${isFollowing ? 'following' : hasPendingRequest ? 'pending' : ''}`} 
+              onClick={handleFollowAction}
+              disabled={hasPendingRequest}
+            >
+              {getFollowButtonText()}
+            </button>
+          )}
+
+          <button className="more-btn">
+            <MoreHorizontal size={22} />
+          </button>
+        </div>
       </div>
 
       {/* Post Image */}

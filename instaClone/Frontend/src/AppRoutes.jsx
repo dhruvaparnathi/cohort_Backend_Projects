@@ -4,6 +4,7 @@ import Register from './features/auth/pages/Register';
 import Feed from './features/posts/pages/Feed';
 import CreatePost from './features/posts/pages/CreatePost';
 import Profile from './features/auth/pages/Profile';
+import ProtectedRoute from './features/shared/components/ProtectedRoute';
 
 const AppRoutes = () => {
   return (
@@ -12,10 +13,22 @@ const AppRoutes = () => {
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
 
-        <Route path='/profile' element={<Profile />}/>
+        <Route path='/profile' element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }/>
 
-        <Route path='/' element={<Feed />} />
-        <Route path='/create-post' element={<CreatePost />} />
+        <Route path='/' element={
+          <ProtectedRoute>
+            <Feed />
+          </ProtectedRoute>
+        } />
+        <Route path='/create-post' element={
+          <ProtectedRoute>
+            <CreatePost />
+          </ProtectedRoute>
+        } />
       </Routes>
     </BrowserRouter>
   )

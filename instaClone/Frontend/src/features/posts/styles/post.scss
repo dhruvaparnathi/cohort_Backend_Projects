@@ -42,6 +42,12 @@
       }
     }
 
+    .post-top-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
     .more-btn {
       background: transparent;
       border: none;
@@ -51,6 +57,36 @@
       align-items: center;
       justify-content: center;
     }
+  }
+
+  .follow-btn {
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+
+  .follow-btn.following {
+    border-color: rgba(59,130,246,0.8);
+    background: rgba(59,130,246,0.18);
+    color: #60a5fa;
+  }
+
+  .follow-btn.pending {
+    border-color: rgba(255,193,7,0.8);
+    background: rgba(255,193,7,0.18);
+    color: #ffc107;
+    cursor: not-allowed;
+  }
+
+  .follow-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.14);
   }
 
   .post-image {

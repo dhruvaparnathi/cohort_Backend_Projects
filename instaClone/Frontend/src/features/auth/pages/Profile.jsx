@@ -13,12 +13,20 @@ import {
 
 import { useAuth } from "../hooks/useAuth";
 import { getFollowers, getFollowings } from "../services/auth.api";
-import { getAllPosts, getFeed } from "../../posts/services/post.api";
+import { getAllPosts } from "../../posts/services/post.api";
 import { usePost } from "../../posts/hooks/usePost";
+import Loader from "../../shared/components/Loader";
+import { useNavigate } from "react-router";
 
 const Profile = () => {
-  const { user, handleGetMe } = useAuth();
+  const { user, followRequestsData, handleGetMe, handleLogout, handleGetFollowRequests, handleAcceptFollowRequest, handleRejectFollowRequest } = useAuth();
   const { userPosts, handleGetAllPosts } = usePost();
+  const navigate = useNavigate();
+
+  const onLogout = async () => {
+    await handleLogout();
+    navigate('/login');
+  };
 
   const [posts, setPosts] = useState([]);
   const [followers, setFollowers] = useState([]);
@@ -31,11 +39,17 @@ const Profile = () => {
     }
 
     fetchProfile();
+    handleGetFollowRequests();
+    console.log('Profile loaded, followRequestsData:', followRequestsData);
   }, [user]);
 
   useEffect(() => {
     if (userPosts) setPosts(userPosts);
   }, [userPosts]);
+
+  useEffect(() => {
+    console.log('followRequestsData updated:', followRequestsData);
+  }, [followRequestsData]);
 
   async function fetchProfile() {
     try {
@@ -50,12 +64,26 @@ const Profile = () => {
     }
   }
 
+  const handleAccept = async (username) => {
+    try {
+      await handleAcceptFollowRequest(username);
+      await fetchProfile();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleReject = async (username) => {
+    try {
+      await handleRejectFollowRequest(username);
+      await fetchProfile();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   if (!user) {
-    return (
-      <div className="profile-loading">
-        <h1>Loading Profile...</h1>
-      </div>
-    );
+    return <Loader message="Loading your profile..." />;
   }
 
   return (
@@ -89,16 +117,16 @@ const Profile = () => {
                   <p>@{user.username}</p>
                 </div>
 
-                <button className="edit-btn">
-                  <Settings size={18} />
-                  Edit Profile
-                </button>
-
+                <div className="profile-action-buttons">
+                  <button className="edit-btn">
+                    <Settings size={18} />
+                    Edit Profile
+                  </button>
+                  <button className="logout-btn" onClick={onLogout}>
+                    Logout
+                  </button>
+                </div>
               </div>
-
-              <p className="bio">
-                {user.bio || "No bio added yet."}
-              </p>
 
               {/* STATS */}
 
@@ -152,6 +180,55 @@ const Profile = () => {
 
         </section>
 
+        {/* FOLLOW REQUESTS */}
+
+        {user && (
+          <section className="follow-requests-section">
+            <div className="section-title">
+              <UserPlus size={20} />
+              <h2>Follow Requests</h2>
+            </div>
+
+            {!followRequestsData ? (
+              <div className="empty-follow-requests">
+                <p>Loading follow requests...</p>
+              </div>
+            ) : followRequestsData.followRequests?.length > 0 ? (
+              <div className="follow-requests-list">
+                {followRequestsData.followRequests.map((request) => (
+                  <div key={request._id} className="follow-request-card">
+                    <div className="request-user">
+                      <img src={request.follower.profileImage} alt="" />
+                      <div>
+                        <h4>{request.follower.username}</h4>
+                        <p>sent you a follow request</p>
+                      </div>
+                    </div>
+                    <div className="request-actions">
+                      <button 
+                        className="accept-btn"
+                        onClick={() => handleAccept(request.follower.username)}
+                      >
+                        Accept
+                      </button>
+                      <button 
+                        className="reject-btn"
+                        onClick={() => handleReject(request.follower.username)}
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-follow-requests">
+                <p>No incoming follow requests for your profile right now.</p>
+              </div>
+            )}
+          </section>
+        )}
+
         {/* POSTS */}
 
         <section className="posts-section">
@@ -184,7 +261,6 @@ const Profile = () => {
 
                       <div>
                         <h4>{user.username}</h4>
-                        <p>{post.likesCount || 0} likes</p>
                       </div>
                     </div>
 

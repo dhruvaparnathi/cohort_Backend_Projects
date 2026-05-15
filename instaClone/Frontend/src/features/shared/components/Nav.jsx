@@ -1,25 +1,13 @@
 import { Link } from "react-router";
 import "../styles/nav.scss";
-import CreatePost from "../../posts/pages/CreatePost";
-import { getMe } from "../../auth/services/auth.api";
 import { useAuth } from "../../auth/hooks/useAuth";
-import { useEffect } from "react";
+import Loader from "./Loader";
 
 const Nav = () => {
-  const { user, handleGetMe, loading } = useAuth();
-
-  useEffect(() => {
-    handleGetMe().then((res) => {
-      console.log(res);
-    });
-  }, []);
+  const { user, loading } = useAuth();
 
   if (loading) {
-    return (
-      <main>
-        <h1>Fetching User</h1>
-      </main>
-    );
+    return <Loader message="Loading user data..." />;
   }
 
   return (
@@ -28,7 +16,7 @@ const Nav = () => {
         {user ? (
           <>
             <img src={user.profileImage} alt="profile" />
-            <a href="/profile"><h3>{user.username}</h3></a>
+            <Link to="/profile"><h3>{user.username}</h3></Link>
           </>
         ) : (
           <h3>Loading...</h3>

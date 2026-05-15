@@ -155,6 +155,30 @@ async function getAllFollowersController(req, res) {
     });
 }
 
+async function getPendingFollowRequestsController(req, res) {
+
+    const userId = req.user.id;
+
+    const pendingRequests = await followModel
+        .find({
+            follower: userId,
+            status: "pending"
+        })
+        .populate('followee', 'username profileImage');
+
+    if (pendingRequests.length === 0) {
+        return res.status(200).json({
+            message: "No pending follow requests.",
+            pendingRequests: []
+        });
+    }
+
+    res.status(200).json({
+        message: "Pending follow requests fetched successfully.",
+        pendingRequests
+    });
+}
+
 async function acceptFollowRequestController(req, res) {
 
     const followerUsername = req.params.username;
@@ -247,6 +271,7 @@ module.exports = {
     followUserController,
     unfollowUserController,
     getAllFollowRequestsController,
+    getPendingFollowRequestsController,
     getAllFollowingsController,
     getAllFollowersController,
     acceptFollowRequestController,

@@ -1,27 +1,34 @@
 import React from "react";
 import "../styles/form.scss";
-import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useAuth } from "../hooks/useAuth";
+import Loader from "../../shared/components/Loader";
 
 const Register = () => {
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [error, setError] = useState("")
+    const navigate = useNavigate();
+
+    const { handleRegister, loading } = useAuth();
+
+    if(loading){
+      return <Loader message="Creating your account..." />
+    }
 
     async function handleSubmit(e){
         e.preventDefault()
+        setError("")
 
-        axios.post("http://localhost:3000/api/auth/register",{
-            username,
-            email,
-            password
-        },{
-            withCredentials: true
-        })
-        .then(res=>{
-            console.log(res.data)
-        })
+        try {
+          await handleRegister(username, email, password);
+          navigate('/');
+        } catch (err) {
+          console.error(err);
+          setError("Registration failed. Please try again.");
+        }
     }
 
   return (
@@ -37,7 +44,8 @@ const Register = () => {
             <div className="input-group">
               <label>Username</label>
               <input
-                onInput={(e)=>{ setUsername(e.target.value) }}
+                onChange={(e)=>{ setUsername(e.target.value) }}
+                value={username}
                 type="text"
                 name="username"
                 placeholder="Enter username"
@@ -47,7 +55,8 @@ const Register = () => {
             <div className="input-group">
               <label>Email</label>
               <input
-              onInput={(e)=>{ setEmail(e.target.value) }}
+                onChange={(e)=>{ setEmail(e.target.value) }}
+                value={email}
                 type="email"
                 name="email"
                 placeholder="Enter email"
@@ -57,7 +66,8 @@ const Register = () => {
             <div className="input-group">
               <label>Password</label>
               <input
-              onInput={(e)=>{ setPassword(e.target.value) }}
+                onChange={(e)=>{ setPassword(e.target.value) }}
+                value={password}
                 type="password"
                 name="password"
                 placeholder="Enter password"
@@ -66,6 +76,8 @@ const Register = () => {
 
             <button type="submit">Create Account</button>
           </form>
+
+          {error && <p className="error-message">{error}</p>}
 
           <p className="switch-auth">
             Already have an account? <Link to="/login">Login</Link>

@@ -7,6 +7,7 @@ followRoutes.post('/follow/:username', identifyUser, userController.followUserCo
 followRoutes.post('/unfollow/:username', identifyUser, userController.unfollowUserController);
 
 followRoutes.get('/followrequests', identifyUser, userController.getAllFollowRequestsController);
+followRoutes.get('/pendingrequests', identifyUser, userController.getPendingFollowRequestsController);
 followRoutes.get('/followings', identifyUser, userController.getAllFollowingsController);
 followRoutes.get('/followers', identifyUser, userController.getAllFollowersController);
 
