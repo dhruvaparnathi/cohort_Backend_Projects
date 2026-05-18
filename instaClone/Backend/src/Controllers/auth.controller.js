@@ -46,7 +46,7 @@ async function registerController(req,res){
     res.cookie("token", token, {
         httpOnly: true,
         sameSite: "lax",
-        secure: false,
+        secure: true,
         maxAge: 1000 * 60 * 60 * 24,
     });
 
@@ -90,7 +90,7 @@ async function loginController(req,res){
     res.cookie("token", token, {
         httpOnly: true,
         sameSite: "lax",
-        secure: false,
+        secure: true,
         maxAge: 1000 * 60 * 60 * 24,
     });
 
