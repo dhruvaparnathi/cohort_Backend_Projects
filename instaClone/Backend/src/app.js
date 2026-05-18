@@ -18,11 +18,11 @@ app.use(cors({
 app.use(cookieParser());
 
 // logging middleware
+// (disabled noisy request logging)
 app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} from ${req.ip}`);
-    console.log('Headers:', req.headers);
     next();
 });
+
 
 app.use("/api/auth", authRouter);
 app.use("/api/posts", postRouter);

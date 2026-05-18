@@ -26,8 +26,8 @@ const Register = () => {
           await handleRegister(username, email, password);
           navigate('/');
         } catch (err) {
-          console.error(err);
-          setError("Registration failed. Please try again.");
+        // console.error(err); // unnecessary debug log
+        setError("Registration failed. Please try again.");
         }
     }
 

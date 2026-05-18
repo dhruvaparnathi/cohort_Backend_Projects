@@ -40,7 +40,7 @@ const Profile = () => {
 
     fetchProfile();
     handleGetFollowRequests();
-    console.log('Profile loaded, followRequestsData:', followRequestsData);
+    // console.log('Profile loaded, followRequestsData:', followRequestsData); // unnecessary debug log
   }, [user]);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const Profile = () => {
   }, [userPosts]);
 
   useEffect(() => {
-    console.log('followRequestsData updated:', followRequestsData);
+    // console.log('followRequestsData updated:', followRequestsData); // unnecessary debug log
   }, [followRequestsData]);
 
   async function fetchProfile() {
@@ -60,7 +60,7 @@ const Profile = () => {
       setFollowers(followersRes.followers || []);
       setFollowings(followingsRes.followings || []);
     } catch (err) {
-      console.log(err);
+      // console.log(err); // unnecessary debug log
     }
   }
 
@@ -69,7 +69,7 @@ const Profile = () => {
       await handleAcceptFollowRequest(username);
       await fetchProfile();
     } catch (err) {
-      console.log(err);
+      // console.log(err); // unnecessary debug log
     }
   };
 
@@ -78,7 +78,7 @@ const Profile = () => {
       await handleRejectFollowRequest(username);
       await fetchProfile();
     } catch (err) {
-      console.log(err);
+      // console.log(err); // unnecessary debug log
     }
   };
 

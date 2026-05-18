@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 
 
 async function registerController(req,res){
-    console.log('Register request:', req.body);
     const { email, username, password, bio, profileImage } = req.body
 
     const isUserAlreadyExist = await userModel.findOne({
@@ -15,13 +14,11 @@ async function registerController(req,res){
     });
 
     if(isUserAlreadyExist){
-        console.log('User already exists:', isUserAlreadyExist);
         return res.status(409).json({
             message:"User Already Registered..."
         })
     }
 
-    console.log('Creating user...');
     const hash = await bcrypt.hash(password,10);
 
     const user = await userModel.create({
@@ -31,8 +28,6 @@ async function registerController(req,res){
         bio,
         profileImage
     })
-
-    console.log('User created:', user._id);
 
     const token = jwt.sign(
         {
@@ -59,7 +54,6 @@ async function registerController(req,res){
 
 
 async function loginController(req,res){
-    console.log('Login request received:', req.body);
     const { username, email, password } = req.body;
 
     const user = await userModel.findOne({

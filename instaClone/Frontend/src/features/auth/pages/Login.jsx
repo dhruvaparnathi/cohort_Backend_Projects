@@ -19,18 +19,18 @@ const Login = () => {
 
   function handleSubmit(e){
     e.preventDefault();
-    console.log('handleSubmit called with:', username, password);
+    // console.log('handleSubmit called with:', username, password); // unnecessary debug log
     setError("");
 
     handleLogin(username, password)
       .then((res) => {
-        console.log(res);
+        // console.log(res); // unnecessary debug log
         if (res && res.user) {
           navigate('/');
         }
       })
       .catch((err) => {
-        console.error(err);
+        // console.error(err); // unnecessary debug log
         setError("Login failed. Please check your credentials.");
       });
   }

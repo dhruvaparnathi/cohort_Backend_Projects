@@ -6,5 +6,5 @@ const connectToDB = require('./src/Config/database');
 connectToDB();
 
 app.listen(PORT,()=>{
-    console.log(`Server is live at port:${PORT}...`);
+    // server started
 })
