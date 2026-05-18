@@ -5,12 +5,9 @@ const api = axios.create({
     withCredentials: true
 });
 
-console.log('API baseURL:', api.defaults.baseURL);
-
-// Add request interceptor
+// Add request interceptor (silent in production/deploy)
 api.interceptors.request.use(
     (config) => {
-        console.log('Making request to:', config.baseURL + config.url, 'withCredentials:', config.withCredentials);
         return config;
     },
     (error) => {
@@ -28,7 +25,7 @@ export async function register(username, email, password){
         });
         return response.data;
     }catch(err){
-        console.error('Register error:', err.response?.data || err.message);
+        // console.error('Register error:', err.response?.data || err.message); // unnecessary debug log
         throw err;
     }
 }
@@ -36,16 +33,14 @@ export async function register(username, email, password){
 export async function login(username, password) {
     
     try{
-        console.log('Making login request to:', api.defaults.baseURL + "/auth/login");
-        console.log('With data:', { username, password });
         const response = await api.post("/auth/login", {
+
             username,
             password
         });
-        console.log('Login response:', response);
         return response.data;
     }catch(err){
-        console.error('Login error:', err.response?.data || err.message);
+        // console.error('Login error:', err.response?.data || err.message); // unnecessary debug log
         throw err;
     }
 }
