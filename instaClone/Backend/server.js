@@ -1,9 +1,10 @@
 require('dotenv').config();
 const app = require('./src/app');
+const PORT = process.env.PORT || 3000;
 const connectToDB = require('./src/Config/database');
 
 connectToDB();
 
-app.listen(3000,()=>{
-    console.log("Server is live at port:3000...");
+app.listen(PORT,()=>{
+    console.log(`Server is live at port:${PORT}...`);
 })
